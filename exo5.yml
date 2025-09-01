@@ -1,0 +1,104 @@
+openapi: 3.0.3
+info:
+  title: Products & Orders API
+  version: 1.0.0
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        name:
+          type: string
+        expiration_datetime:
+          type: string
+          format: date-time
+        price:
+          type: number
+          format: float
+    Order:
+      type: object
+      properties:
+        identifier:
+          type: integer
+        customer_name:
+          type: string
+        creation_datetime:
+          type: string
+          format: date-time
+        total_amount:
+          type: number
+          format: float
+  parameters:
+    pageParam:
+      name: page
+      in: query
+      schema:
+        type: integer
+      example: 1
+    sizeParam:
+      name: size
+      in: query
+      schema:
+        type: integer
+      example: 20
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+paths:
+  /products:
+    get:
+      tags: [Products]
+      summary: Get products
+      responses:
+        '200':
+          description: List of products
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+  /orders:
+    get:
+      tags: [Orders]
+      summary: Get list of orders
+      parameters:
+        - $ref: '#/components/parameters/pageParam'
+        - $ref: '#/components/parameters/sizeParam'
+      responses:
+        '200':
+          description: List of orders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+    post:
+      tags: [Orders]
+      summary: Create a new order
+      security:
+        - basicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
+            example:
+              customer_name: "Alice"
+              creation_datetime: "2025-08-28T10:00:00Z"
+              total_amount: 45.5
+      responses:
+        '201':
+          description: Created order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+              example:
+                identifier: 101
+                customer_name: "Alice"
+                creation_datetime: "2025-08-28T10:00:00Z"
+                total_amount: 45.5
