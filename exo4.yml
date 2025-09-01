@@ -2,6 +2,9 @@ openapi: 3.0.3
 info:
   title: Product Search API
   version: 1.0.0
+servers:
+  - url: https://mock.example.com
+    description: Mock server for testing
 components:
   schemas:
     Product:
