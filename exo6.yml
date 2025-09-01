@@ -1,0 +1,141 @@
+openapi: 3.0.3
+info:
+  title: User Profile API
+  version: 1.0.0
+components:
+  schemas:
+    PersonalInfo:
+      type: object
+      properties:
+        first_name:
+          type: string
+        last_name:
+          type: string
+        birthdate:
+          type: string
+          format: date
+        email:
+          type: string
+          format: email
+    Address:
+      type: object
+      properties:
+        address_street:
+          type: string
+        address_city:
+          type: string
+        address_country:
+          type: string
+        address_postal_code:
+          type: integer
+    Preferences:
+      type: object
+      properties:
+        needs_newsletter:
+          type: boolean
+        language:
+          type: string
+          enum: [mg, fr, eng]
+    CreateUserProfile:
+      allOf:
+        - $ref: '#/components/schemas/PersonalInfo'
+        - $ref: '#/components/schemas/Address'
+        - $ref: '#/components/schemas/Preferences'
+    UserProfile:
+      allOf:
+        - type: object
+          properties:
+            identifier:
+              type: string
+        - $ref: '#/components/schemas/CreateUserProfile'
+paths:
+  /users/{id}:
+    get:
+      summary: Get a user profile
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User profile found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+  /users:
+    post:
+      summary: Create user profiles
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/CreateUserProfile'
+      responses:
+        '201':
+          description: Created user profiles with identifiers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserProfile'
+  /users/{id}/personalInfo:
+    put:
+      summary: Update personal info
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PersonalInfo'
+      responses:
+        '200':
+          description: Updated personal info
+  /users/{id}/address:
+    put:
+      summary: Update address
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Address'   # ✅ Correction
+      responses:
+        '200':
+          description: Updated address
+  /users/{id}/preferences:
+    put:
+      summary: Update preferences
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Preferences'
+      responses:
+        '200':
+          description: Updated preferences
